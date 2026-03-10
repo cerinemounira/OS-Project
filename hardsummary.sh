@@ -53,6 +53,7 @@ function battery(){
 
 function display(){
     echo -e "\n ********* HARDWARE RAPORT SMALL ********* \n"
+    echo -e "HOSTNAME: $(hostname)"
     date
     cpu
     gpu
