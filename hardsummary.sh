@@ -9,7 +9,6 @@ function cpu(){
 function gpu(){
     echo -e "\n*************** GPU *************** \n"
     glxinfo | grep "Device"
-    ##lspci | grep -i vga
 }
 
 function ram(){
@@ -21,13 +20,10 @@ function ram(){
 function disk(){
     echo -e "\n*************** DISK *************** \n"
     df -T | awk '{print$1,$2,$4,$5,$7,$8}' | column -t
-    ##lsblk -o NAME,SIZE,MOUNTPOINT
-    ##df -h | awk '{print $1, $3, $5, $6}' | column -t
 }
 
 function network(){
-    echo -e "\n*************** NETWORK *************** \n"
-    ##ip -brief addr show | awk 'BEGIN {printf "%-15s %-10s %-20s\n", "INTERFACE", "STATUS", "IP ADDRESS"; print "------------------------------------------------------------"} {printf "%-15s %-10s %-20s\n", $1, $2, $3}'
+    e 1, $2, $3}'cho -e "\n*************** NETWORK *************** \n"
     ip -brief addr show | awk 'BEGIN {printf "%-15s %-10s %-20s %-20s\n", "INTERFACE", "STATUS", "MAC ADDRESS", "IP ADDRESS"; print "--------------------------------------------------------------------"} { "cat /sys/class/net/"$1"/address" | getline mac; printf "%-15s %-10s %-20s %-20s\n", $1, $2, mac, $3}'
 }
 
