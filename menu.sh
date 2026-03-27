@@ -1,4 +1,4 @@
-#!bin/bash
+#!/bin/bash
 
 
 echo -e "\n HELLO, SELECT A CHOICE FOR A HARDWARE AND SOFTWARE REPORT \n"
