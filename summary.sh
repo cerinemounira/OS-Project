@@ -13,7 +13,7 @@ function cpu(){
 
 function gpu(){
     echo -e "\n*************** GPU *************** \n"
-    glxinfo | grep "Device"
+    lspci | grep -i vga
 }
 
 function ram(){
