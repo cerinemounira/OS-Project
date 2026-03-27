@@ -161,5 +161,5 @@ function displaysoft(){
 displaysoft
 displayhard 
 #send through mail
-long = full_report_$(date +%Y%m%d).txt
+long=full_report_$(date +%Y%m%d).txt
 ./mail.sh long
