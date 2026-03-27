@@ -14,7 +14,6 @@ FULL_SCRIPT="/proscr/full.sh"
 #crete parent directory if not exist
 mkdir -p "$LOG_DIR" 
 
-#mn hna mfhmtch
 log_event() {
     local status="$1"
     local message="$2"
