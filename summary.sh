@@ -155,6 +155,6 @@ function displaysoft(){
 displaysoft
 displayhard
 #send through email
-name_short = short_report_$(date +%Y%m%d).txt
+name_short=short_report_$(date +%Y%m%d).txt
 ./mail.sh name_short
 
