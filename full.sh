@@ -160,6 +160,14 @@ function displaysoft(){
 #display
 displaysoft
 displayhard 
+
 #send through mail
-long=full_report_$(date +%Y%m%d).txt
-./mail.sh long
+echo -e "\nDo you want to send this report via email? (y/n)"
+read answer
+if [ "$answer" = "y" ]; then
+    report_file="/var/log/sys_audit/full_report_$(date +%Y%m%d).txt"
+    displaysoft > "$report_file"
+    displayhard >> "$report_file"
+    bash "$(dirname "$0")/mail.sh" "$report_file"
+
+fi
