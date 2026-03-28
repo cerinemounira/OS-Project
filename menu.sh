@@ -9,6 +9,12 @@ echo -e "\n **** PLEASE ENTER YOUR CHOICE **** \n"
 
 read choice
 
+#check if input is empty
+if [ -z "$choice" ]; then
+    echo -e "\n[ERROR] No input provided. Please run the script again."
+    exit 1
+fi
+
 if [ "$choice" -eq 1 ]; then
     echo -e "\n Full Report..."
     ./full.sh
