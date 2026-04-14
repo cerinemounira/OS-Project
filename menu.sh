@@ -2,9 +2,9 @@
 
 
 echo -e "\n HELLO, SELECT A CHOICE FOR A HARDWARE AND SOFTWARE REPORT \n"
-echo -e " 1. FULL REPORT & send to your email"
-echo -e " 2. SMALL REPORT & send to your email"
-echo -e " 3. BOTH & send to your email"
+echo -e " 1. FULL REPORT & send to your email or via ssh"
+echo -e " 2. SMALL REPORT & send to your email or via ssh"
+echo -e " 3. BOTH & send to your email or via ssh"
 echo -e "\n **** PLEASE ENTER YOUR CHOICE **** \n"
 
 read choice
@@ -31,3 +31,4 @@ elif [ "$choice" -eq 3 ]; then
 else 
     echo -e "\n[!] INVALID CHOICE! Please run the script again." 
 fi
+
