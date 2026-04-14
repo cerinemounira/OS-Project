@@ -14,7 +14,7 @@ MAIL_SCRIPT="$(dirname "$0")/mail.sh"
 #$0 gives the path of the current file (./file)
 #dirname "$0" gives the directory path of the current file or dir
 
-mkdir -p "$LOG_DIR"
+sudo mkdir -p "$LOG_DIR"
 
 log_event() {
     local status="$1"
@@ -24,23 +24,26 @@ log_event() {
 
 log_event "START" "Automated audit initiated."
 
-if bash "$SHORT_SCRIPT" > "$SHORT_REPORT" 2>> "$LOG_FILE"; then
+if echo "n" | bash "$SHORT_SCRIPT" > "$SHORT_REPORT" 2>> "$LOG_FILE"; then
     log_event "SUCCESS" "Short report generated: $SHORT_REPORT"
 else
     log_event "ERROR" "Short report script failed."
 fi
 
-if bash "$FULL_SCRIPT" > "$FULL_REPORT" 2>> "$LOG_FILE"; then
+#n is for input
+
+if echo "n" | bash "$FULL_SCRIPT" > "$FULL_REPORT" 2>> "$LOG_FILE"; then
     log_event "SUCCESS" "Full report generated: $FULL_REPORT"
 else
     log_event "ERROR" "Full report script failed."
 fi
 
-sha256sum "$FULL_REPORT" >> "$LOG_DIR/integrity_checks.log" 2>> "$LOG_FILE"
-sha256sum "$SHORT_REPORT" >> "$LOG_DIR/integrity_checks.log" 2>> "$LOG_FILE"
+sha256sum "$FULL_REPORT" >> "$LOG_DIR/integrity_checks_full.log" 2>> "$LOG_FILE"
+sha256sum "$SHORT_REPORT" >> "$LOG_DIR/integrity_checks_summary.log" 2>> "$LOG_FILE"
 log_event "INFO" "Integrity hashes generated for both reports."
 
-bash "$MAIL_SCRIPT" "$FULL_REPORT"
-log_event "INFO" "Mail script invoked for full report."
+#bash "$MAIL_SCRIPT" "$FULL_REPORT"
+#log_event "INFO" "Mail script invoked for full report."
 
 log_event "FINISH" "Automation cycle complete."
+
