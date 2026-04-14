@@ -23,7 +23,7 @@ network_det() {
 
 ram_det() {
     echo -e "\n*************** RAM *************** \n"
-    free -h --t
+    free -h -t
     echo -e "\nHardware Memory Banks:"
     sudo dmidecode -t memory 2>/dev/null | grep -E "Size|Type|Speed|Manufacturer" || echo "Run with sudo for memory bank details."
     echo ""
@@ -52,12 +52,13 @@ usb_det() {
 
 bios_det(){
     echo -e "\n*************** BIOS *************** \n"
-    dmidecode -t bios | grep -E "Vendor|Version|Release Date|Address|Runtime Size|ROM Size"
-    dmidecode -t bios | sed -n '/Characteristics:/,$p' | grep -v "Characteristics:" | sed 's/^[ \t]*//'
+    sudo dmidecode -t bios | grep -E "Vendor|Version|Release Date|Address|Runtime Size|ROM Size"
+    sudo dmidecode -t bios | sed -n '/Characteristics:/,$p' | grep -v "Characteristics:" | sed 's/^[ \t]*//'
 }
 battery_det(){
     echo -e "\n*************** BATTERY *************** \n"
     sudo dmidecode -t 22 | grep -E "Manufacturer|Name:|Design Capacity|Design Voltage|SBDS Serial Number|SBDS Chemistry" | sed 's/^[ \t]*//'
+    echo -e "\n"
 }
 displayhard() {
     echo "-------------------------------------"
@@ -145,7 +146,7 @@ function displaysoft(){
 
 
     echo "HOSTNAME:"$(hostname)
-    #echo "DATE:"$(date)
+    echo "DATE:"$(date)
     os
     echo
     pro 
@@ -169,5 +170,16 @@ if [ "$answer" = "y" ]; then
     displaysoft > "$report_file"
     displayhard >> "$report_file"
     bash "$(dirname "$0")/mail.sh" "$report_file"
+
+fi
+
+#send through ssh
+echo -e "\nDo you want to send this report via ssh? (y/n)"
+read answer
+if [ "$answer" = "y" ]; then
+    report_file="/var/log/sys_audit/full_report_$(date +%Y%m%d).txt"
+    displaysoft > "$report_file"
+    displayhard >> "$report_file"
+    bash "$(dirname "$0")/ssh.sh" "$report_file"
 
 fi
