@@ -53,6 +53,7 @@ function bios(){
 function battery(){
     echo -e "\n*************** BATTERY *************** \n"
     sudo dmidecode -t 22 | grep -E "Location|Manufacturer|Name|Design|Chemistry"
+    echo -e "\n"
 }
 
 function displayhard(){
@@ -137,7 +138,7 @@ function displaysoft(){
 
     echo
     echo "HOSTNAME:"$(hostname)
-    #echo "DATE:"$(date)
+    echo "DATE:"$(date)
     echo
     os
     echo
@@ -164,5 +165,16 @@ if [ "$answer" = "y" ]; then
     displaysoft > "$report_file"
     displayhard >> "$report_file"
     bash "$(dirname "$0")/mail.sh" "$report_file"
+fi
+
+#send through ssh
+
+echo -e "\nDo you want to send this report via ssh? (y/n)"
+read answer
+if [ "$answer" = "y" ]; then
+    report_file="/var/log/sys_audit/short_report_$(date +%Y%m%d).txt"
+    displaysoft > "$report_file"
+    displayhard >> "$report_file"
+    bash "$(dirname "$0")/ssh.sh" "$report_file"
 fi
 
