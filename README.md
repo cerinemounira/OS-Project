@@ -1,13 +1,12 @@
-# OS-Project
-OS 2026 Ramazan project 
 # Linux System Audit and Monitoring — Shell Scripting Project
+
 **NSCS | Academic Year 2025/2026**
 
 ---
 
 ## Overview
 
-This project implements an automated Linux audit system that collects hardware and software information, generates short and full reports, sends them via email, and supports scheduled automation via cron.
+This project implements an automated Linux system audit tool that collects detailed hardware and software information, generates structured reports, sends them via email or SSH, and supports scheduled automation via cron jobs.
 
 ---
 
@@ -19,6 +18,7 @@ This project implements an automated Linux audit system that collects hardware a
 ├── full.sh        # Full/detailed hardware + software report
 ├── summary.sh     # Short/summary hardware + software report
 ├── mail.sh        # Sends a report file via email (msmtp)
+├── ssh.sh         # Sends a report file to a remote machine via SCP
 └── logexec.sh     # Orchestrator: runs scripts, logs events, checks integrity
 ```
 
@@ -28,18 +28,21 @@ Reports are saved to: `/var/log/sys_audit/`
 
 ## Requirements
 
-- Linux distribution (Ubuntu, Kali, etc.)
-- Tools used: `lscpu`, `lspci`, `lsblk`, `dmidecode`, `nmcli`, `ip`, `free`, `df`, `lsusb`, `glxinfo`, `ss`, `systemctl`, `ps`, `dpkg`, `apt-mark`, `who`, `uname`
-- Email: `msmtp` must be installed and configured
-- Run scripts as root (or with `sudo`) for full hardware details
+- Linux distribution (Ubuntu, Kali, Debian-based, etc.)
+- Run scripts as **root** or with `sudo` for full hardware access
+- Tools used: `lscpu`, `lspci`, `lsblk`, `dmidecode`, `nmcli`, `ip`, `free`, `df`, `lsusb`, `ss`, `systemctl`, `ps`, `dpkg`, `apt-mark`, `who`, `uname`, `msmtp`, `scp`
 
-### Install msmtp
+---
+
+## Email Setup (msmtp)
+
+### Install
 
 ```bash
 sudo apt install msmtp msmtp-mta
 ```
 
-### Configure msmtp (~/.msmtprc)
+### Configure `~/.msmtprc`
 
 ```
 defaults
@@ -62,17 +65,69 @@ account default : gmail
 chmod 600 ~/.msmtprc
 ```
 
-> Use a Gmail App Password (not your main password). Generate one at: myaccount.google.com → Security → App passwords.
+> Use a Gmail **App Password**, not your account password.  
+> Generate one at: **Google Account → Security → 2-Step Verification → App Passwords**
+
+---
+
+## SSH Setup (Remote Transfer)
+
+### 1. Install SSH Server on the Remote Machine
+
+```bash
+sudo apt update
+sudo apt install openssh-server
+sudo systemctl enable ssh
+sudo systemctl start ssh
+```
+
+Verify it's running:
+
+```bash
+sudo systemctl status ssh
+```
+
+### 2. Generate an SSH Key on the Local Machine
+
+```bash
+ssh-keygen
+```
+
+### 3. Copy the Public Key to the Remote Machine
+
+```bash
+ssh-copy-id user@remote_ip
+```
+
+### 4. Test the Connection
+
+```bash
+ssh user@remote_ip
+```
+
+If you log in without a password — SSH is configured correctly ✔
+
+### 5. Configure `ssh.sh`
+
+Edit the variables at the top of `ssh.sh` with your actual values:
+
+```bash
+REMOTE_USER="your_username"
+REMOTE_HOST="192.168.1.100"
+REMOTE_DIR="/home/your_username/reports"
+```
 
 ---
 
 ## Installation
 
 ```bash
-# Clone or copy all scripts to a directory, e.g. /proscr/
-sudo mkdir -p /proscr
-sudo cp *.sh /proscr/
-sudo chmod +x /proscr/*.sh
+# Clone the repository
+git clone https://github.com/your_username/your_repo.git
+cd your_repo
+
+# Make all scripts executable
+chmod +x *.sh
 
 # Create log directory
 sudo mkdir -p /var/log/sys_audit
@@ -82,47 +137,47 @@ sudo mkdir -p /var/log/sys_audit
 
 ## How to Run
 
-### Interactive menu (manual use)
+### Interactive Menu (Manual Use)
 
 ```bash
-sudo bash /proscr/menu.sh
+sudo bash menu.sh
 ```
 
-Choose:
-- `1` — Full report + email
-- `2` — Short report + email
-- `3` — Both reports + email
+| Choice | Action |
+|--------|--------|
+| `1` | Full report — optionally send via email or SSH |
+| `2` | Short report — optionally send via email or SSH |
+| `3` | Both reports — optionally send via email or SSH |
 
-### Automated orchestrator (used by cron)
+### Automated Orchestrator (Used by Cron)
 
 ```bash
-sudo bash /proscr/logexec.sh
+sudo bash logexec.sh
 ```
 
 This will:
 1. Run `summary.sh` → save to `/var/log/sys_audit/short_report_YYYYMMDD.txt`
 2. Run `full.sh` → save to `/var/log/sys_audit/full_report_YYYYMMDD.txt`
-3. Generate SHA-256 integrity hashes → `/var/log/sys_audit/integrity_checks.log`
-4. Send the full report via email
-5. Log all events → `/var/log/sys_audit/audit_history.log`
+3. Compute SHA-256 integrity hashes → saved to `integrity_checks_full.log` and `integrity_checks_summary.log`
+4. Log all events with timestamps → `/var/log/sys_audit/audit_history.log`
 
 ---
 
 ## Automation (Cron)
 
-To schedule `logexec.sh` to run every day at 04:00 AM:
+`logexec.sh` can be scheduled to run automatically every day at **08:40 AM**:
 
 ```bash
 sudo crontab -e
 ```
 
-Add the following line:
+Add the following line (replace `/path/to/logexec.sh` with the actual path to the script):
 
 ```
-0 4 * * * /bin/bash /proscr/logexec.sh >> /var/log/sys_audit/cron.log 2>&1
+40 8 * * * /path/to/logexec.sh 2>> /var/log/sys_audit/cron.log
 ```
 
-Save and exit. Verify with:
+Save and verify:
 
 ```bash
 sudo crontab -l
@@ -134,15 +189,17 @@ sudo crontab -l
 
 | File | Description |
 |------|-------------|
-| `short_report_YYYYMMDD.txt` | Summary report (hardware + software) |
-| `full_report_YYYYMMDD.txt` | Detailed report (hardware + software) |
+| `short_report_YYYYMMDD.txt` | Summary hardware + software report |
+| `full_report_YYYYMMDD.txt` | Detailed hardware + software report |
 | `audit_history.log` | Timestamped log of all script executions |
-| `integrity_checks.log` | SHA-256 hashes for report verification |
+| `integrity_checks_full.log` | SHA-256 hash of the full report |
+| `integrity_checks_summary.log` | SHA-256 hash of the summary report |
+| `cron.log` | Errors captured from cron-scheduled runs |
 
 ---
 
 ## Notes
 
-- `dmidecode` requires root privileges for motherboard, BIOS, RAM, and battery info.
-- `glxinfo` (used in `summary.sh` for GPU) requires a display environment. It may fail in headless/SSH sessions.
-- The `menu.sh` shebang line is missing the `/` (`#!bin/bash` should be `#!/bin/bash`) — fix before running.
+- `dmidecode` requires **root privileges** to read motherboard, BIOS, RAM, and battery info.
+- `ssh.sh` currently only transfers the **full report**. To also transfer the short report, duplicate the `scp` block and point it to `$SHORT_REPORT`.
+- To enable email sending in `logexec.sh`, remove the `#` before the `bash "$MAIL_SCRIPT"` line.
