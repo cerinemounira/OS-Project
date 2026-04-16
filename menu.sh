@@ -1,7 +1,7 @@
 #!/bin/bash
 
-
-echo -e "\n HELLO, SELECT A CHOICE FOR A HARDWARE AND SOFTWARE REPORT \n"
+echo -e "\n HELLO, THIS\n"
+echo -e "\n SELECT A CHOICE FOR A HARDWARE AND SOFTWARE REPORT \n"
 echo -e " 1. FULL REPORT & send to your email or via ssh"
 echo -e " 2. SMALL REPORT & send to your email or via ssh"
 echo -e " 3. BOTH & send to your email or via ssh"
