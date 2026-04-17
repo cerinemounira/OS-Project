@@ -202,4 +202,4 @@ sudo crontab -l
 
 - `dmidecode` requires **root privileges** to read motherboard, BIOS, RAM, and battery info.
 - `ssh.sh` currently only transfers the **full report**. To also transfer the short report, duplicate the `scp` block and point it to `$SHORT_REPORT`.
-- To enable email sending in `logexec.sh`, remove the `#` before the `bash "$MAIL_SCRIPT"` line.
+
