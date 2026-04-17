@@ -3,7 +3,11 @@
 A modular Bash-based system auditing toolkit that collects hardware and software information, generates reports, logs execution history, and optionally delivers reports via email or SSH.
 
 ---
+## Installation
 
+git clone https://github.com/cerinemounira/OS-Project.git
+
+---
 ## Project Structure
 
 | File | Role |
