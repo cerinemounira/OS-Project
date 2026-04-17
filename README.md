@@ -55,7 +55,7 @@ Both `full.sh` and `summary.sh` prompt after displaying results:
 
 ### Interactive menu
 ```bash
-bash menu.sh
+./menu.sh
 ```
 Choose:
 - `1` — Full report (+ optional email/SSH)
@@ -64,44 +64,34 @@ Choose:
 
 ### Run reports directly
 ```bash
-bash full.sh       # Detailed report
-bash summary.sh    # Summary report
+./full.sh       # Detailed report
+./summary.sh    # Summary report
 ```
 
 ### Automated / scheduled run
 ```bash
-sudo bash logexec.sh
+./logexec.sh
 ```
 All output is saved to `/var/log/sys_audit/`.
 
 ### Scheduling with Cron
 
-Open the **root** crontab (required because `logexec.sh` uses `sudo` internally):
 ```bash
-sudo crontab -e
+crontab -e
 ```
 
 Add one of the following lines depending on how often you want the audit to run:
 
 ```bash
 # Every day at 02:00 AM
-0 2 * * * /bin/bash /path/to/logexec.sh >> /var/log/sys_audit/cron.log 2>&1
-
-# Every week on Monday at 03:00 AM
-0 3 * * 1 /bin/bash /path/to/logexec.sh >> /var/log/sys_audit/cron.log 2>&1
-
-# Every hour
-0 * * * * /bin/bash /path/to/logexec.sh >> /var/log/sys_audit/cron.log 2>&1
-
-# At system reboot
-@reboot /bin/bash /path/to/logexec.sh >> /var/log/sys_audit/cron.log 2>&1
+0 2 * * * /path/to/logexec.sh >> /var/log/sys_audit/cron.log 2>&1
 ```
 
-> Replace `/path/to/` with the actual directory where the scripts are located (e.g. `/home/user/sys_audit/`).
+> Replace `/path/to/` with the actual directory where the scripts are located.
 
 To **verify** the cron job was saved:
 ```bash
-sudo crontab -l
+crontab -l
 ```
 
 ---
