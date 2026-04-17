@@ -42,8 +42,5 @@ sha256sum "$FULL_REPORT" >> "$LOG_DIR/integrity_checks_full.log" 2>> "$LOG_FILE"
 sha256sum "$SHORT_REPORT" >> "$LOG_DIR/integrity_checks_summary.log" 2>> "$LOG_FILE"
 log_event "INFO" "Integrity hashes generated for both reports."
 
-#bash "$MAIL_SCRIPT" "$FULL_REPORT"
-#log_event "INFO" "Mail script invoked for full report."
-
 log_event "FINISH" "Automation cycle complete."
 
