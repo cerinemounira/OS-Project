@@ -23,11 +23,12 @@ network_det() {
     echo ""
 }
 
+
 ram_det() {
     echo -e "\n*************** RAM *************** \n"
-    free -h -t
-    echo -e "\nHardware Memory Banks:"
-    sudo dmidecode -t memory 2>/dev/null | grep -E "Size|Type|Speed|Manufacturer" || echo "Run with sudo for memory bank details."
+    free -h -t | grep -E "Total|Mem"
+    echo -e "\nHardware Details:"
+    sudo dmidecode -t memory 2>/dev/null | grep -E "Error Correction Type|Size|Type|Type Detail|Speed|Manufacturer|Configured Memory Speed|Module Manufacturer ID|Memory Subsystem Controller Manufacturer ID|Non-Volatile Size|Volatile Size|Cache Size|Logical Size" | grep -v "No Module Installed" | uniq || echo "Run with sudo for hardware details."
     echo ""
 }
 
