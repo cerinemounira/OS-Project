@@ -8,7 +8,7 @@ FULL_REPORT="$LOG_DIR/full_report_$(date +%Y%m%d).txt"
 
 SHORT_SCRIPT="$(dirname "$0")/summary.sh"
 FULL_SCRIPT="$(dirname "$0")/full.sh"
-MAIL_SCRIPT="$(dirname "$0")/mail.sh"
+#MAIL_SCRIPT="$(dirname "$0")/mail.sh"
 
 #dirname gives only the directory path (.)
 #$0 gives the path of the current file (./file)
