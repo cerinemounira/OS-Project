@@ -15,6 +15,8 @@ gpu_det() {
 
 network_det() {
     echo -e "\n*************** NETWORK *************** \n"
+    ip -brief addr show | awk 'BEGIN {printf "%-15s %-10s %-20s %-20s\n", "INTERFACE", "STATUS", "MAC ADDRESS", "IP ADDRESS"; print "--------------------------------------------------------------------"} { "cat /sys/class/net/"$1"/address" | getline mac; printf "%-15s %-10s %-20s %-20s\n", $1, $2, mac, $3}'
+    echo -e "\n"
     nmcli device status 2>/dev/null || ip -brief link show
     echo -e "\nDetailed Interface Config:"
     ip addr show | grep -E "link/ether|inet "
