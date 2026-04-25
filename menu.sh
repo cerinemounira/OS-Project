@@ -1,10 +1,10 @@
 #!/bin/bash
 
 echo -e "\n NSCS OS S2 PROJECT \n"
-echo -e "\n BY: MEGHRISSI ROUKAYA && AOUANE MOUNIRA CERINE \n"
+echo -e "\n BY: MEGHRICI ROUKAYA && AOUANE MOUNIRA CERINE \n"
 echo -e "\n SELECT A CHOICE FOR A HARDWARE AND SOFTWARE REPORT \n"
-echo -e " 1. FULL REPORT & send to your email or via ssh"
-echo -e " 2. SMALL REPORT & send to your email or via ssh"
+echo -e " 1. FULL REPORT & send to your email "
+echo -e " 2. SMALL REPORT & send to your email "
 echo -e " 3. BOTH & send to your email or via ssh"
 echo -e "\n **** PLEASE ENTER YOUR CHOICE **** \n"
 
@@ -28,8 +28,16 @@ elif [ "$choice" -eq 3 ]; then
     echo -e "\n[+] Both Reports..."
     ./full.sh
     ./summary.sh
+    #send through ssh
+echo -e "\nDo you want to send both reports via ssh? (y/n)"
+read answer
+if [ "$answer" = "y" ]; then
+    bash "$(dirname "$0")/ssh.sh" 
+
+fi
 
 else 
     echo -e "\n[!] INVALID CHOICE! Please run the script again." 
 fi
+
 
