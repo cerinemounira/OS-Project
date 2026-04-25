@@ -15,20 +15,17 @@ gpu_det() {
 
 network_det() {
     echo -e "\n*************** NETWORK *************** \n"
-    ip -brief addr show | awk 'BEGIN {printf "%-15s %-10s %-20s %-20s\n", "INTERFACE", "STATUS", "MAC ADDRESS", "IP ADDRESS"; print "--------------------------------------------------------------------"} { "cat /sys/class/net/"$1"/address" | getline mac; printf "%-15s %-10s %-20s %-20s\n", $1, $2, mac, $3}'
-    echo -e "\n"
     nmcli device status 2>/dev/null || ip -brief link show
     echo -e "\nDetailed Interface Config:"
     ip addr show | grep -E "link/ether|inet "
     echo ""
 }
 
-
 ram_det() {
     echo -e "\n*************** RAM *************** \n"
-    free -h -t | grep -E "Total|Mem"
-    echo -e "\nHardware Details:"
-    sudo dmidecode -t memory 2>/dev/null | grep -E "Error Correction Type|Size|Type|Type Detail|Speed|Manufacturer|Configured Memory Speed|Module Manufacturer ID|Memory Subsystem Controller Manufacturer ID|Non-Volatile Size|Volatile Size|Cache Size|Logical Size" | grep -v "No Module Installed" | uniq || echo "Run with sudo for hardware details."
+    free -h -t
+    echo -e "\nHardware Memory Banks:"
+    sudo dmidecode -t memory 2>/dev/null | grep -E "Size|Type|Speed|Manufacturer" || echo "Run with sudo for memory bank details."
     echo ""
 }
 
@@ -176,13 +173,4 @@ if [ "$answer" = "y" ]; then
 
 fi
 
-#send through ssh
-echo -e "\nDo you want to send this report via ssh? (y/n)"
-read answer
-if [ "$answer" = "y" ]; then
-    report_file="/var/log/sys_audit/full_report_$(date +%Y%m%d).txt"
-    displaysoft > "$report_file"
-    displayhard >> "$report_file"
-    bash "$(dirname "$0")/ssh.sh" "$report_file"
 
-fi
