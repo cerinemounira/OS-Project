@@ -31,8 +31,17 @@ function disk(){
 
 function network(){
     echo -e "\n*************** NETWORK *************** \n"
-    ##ip -brief addr show | awk 'BEGIN {printf "%-15s %-10s %-20s\n", "INTERFACE", "STATUS", "IP ADDRESS"; print "------------------------------------------------------------"} {printf "%-15s %-10s %-20s\n", $1, $2, $3}'
-    ip -brief addr show | awk 'BEGIN {printf "%-15s %-10s %-20s %-20s\n", "INTERFACE", "STATUS", "MAC ADDRESS", "IP ADDRESS"; print "--------------------------------------------------------------------"} { "cat /sys/class/net/"$1"/address" | getline mac; printf "%-15s %-10s %-20s %-20s\n", $1, $2, mac, $3}'
+    ip -brief addr show | awk '
+    BEGIN {
+        printf "%-15s %-10s %-20s %-20s\n", "INTERFACE", "STATUS", "MAC ADDRESS", "IP ADDRESS";
+        print "--------------------------------------------------------------------"
+    }
+    {
+        cmd = "cat /sys/class/net/" $1 "/address"
+        cmd | getline mac
+        close(cmd)
+        printf "%-15s %-10s %-20s %-20s\n", $1, $2, mac, $3
+    }'
 }
 
 function mother(){
@@ -167,14 +176,6 @@ if [ "$answer" = "y" ]; then
     bash "$(dirname "$0")/mail.sh" "$report_file"
 fi
 
-#send through ssh
 
-echo -e "\nDo you want to send this report via ssh? (y/n)"
-read answer
-if [ "$answer" = "y" ]; then
-    report_file="/var/log/sys_audit/short_report_$(date +%Y%m%d).txt"
-    displaysoft > "$report_file"
-    displayhard >> "$report_file"
-    bash "$(dirname "$0")/ssh.sh" "$report_file"
-fi
+
 
